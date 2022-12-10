@@ -1,0 +1,83 @@
+{
+  "type": "component",
+  "metadata": {},
+  "schema": {
+    "name": "bb-component-SuperTabs",
+    "friendlyName": "Super Tabs",
+    "description": "A Tabs component for Budibase with Super Power",
+    "icon": "Folder2Color",
+    "styles": [ "padding", "border", "shadow" ],
+    "hasChildren": true,
+    "info": "Turn any Group of compoenents into Tabs ! Made with love ",
+    "settings": [
+      {
+        "type": "select",
+        "label": "Direction",
+        "key": "direction",
+        "options": [
+          {
+            "label": "Horizontal",
+            "value": "horizontal"
+          },
+          {
+            "label": "Vertical",
+            "value": "vertical"
+          }
+        ],
+        "defaultValue": "horizontal"
+      },
+      {
+        "type": "select",
+        "label": "Size",
+        "key": "size",
+        "options": [
+          {
+            "label": "Small",
+            "value": "S"
+          },
+          {
+            "label": "Medium",
+            "value": "M"
+          },
+          {
+            "label": "Large",
+            "value": "L"
+          },
+          {
+            "label": "Extra large",
+            "value": "XL"
+          }
+        ],
+        "defaultValue": "M"
+      },
+      {
+        "type": "boolean",
+        "label": "Centered",
+        "key": "centered",
+        "defaultValue": false,
+        "dependsOn": { "setting": "direction", "value": "horizontal" }
+      },
+      {
+        "type": "boolean",
+        "label": "Quiet",
+        "key": "quiet"
+      },
+      {
+        "type": "boolean",
+        "label": "Compact",
+        "key": "compact"
+      },
+      {
+        "type": "boolean",
+        "label": "Emphasized",
+        "key": "emphasized"
+      },
+      {
+        "type": "color",
+        "label": "Emphasized Color",
+        "key": "emphasizedColor",
+        "dependsOn": "emphasized"
+      }
+    ]
+  }
+}
