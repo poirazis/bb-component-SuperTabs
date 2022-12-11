@@ -8,7 +8,7 @@
     let container
     let isSelected
 
-    $: isSelected = ( $tabStore.id === id )
+    $: isSelected = ( $tabStore?.id === id )
     $: init (id, title, emphasized, $tabStore.id)
 
     function handleClick () {

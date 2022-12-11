@@ -53,21 +53,24 @@
   } 
 
   function hideNonSelected () {
-    let children = contents?.children
+    if (contents?.children.length > 0) {
+      let children = contents?.children
 
-    for(var i=0; i<children?.length; i++){
-      var child = children[i];
-      let id = (child.attributes.getNamedItem("data-id")?.nodeValue);   
-      if (id != $tabStore?.id) 
-        child.style.display = "none"
-      else 
-        child.style.display = "block"
-    }   
+      for(var i=0; i<children?.length; i++){
+        var child = children[i];
+        let id = (child.attributes.getNamedItem("data-id")?.nodeValue);   
+        if (id != $tabStore?.id) 
+          child.style.display = "none"
+        else 
+          child.style.display = "block"
+      }   
+    }
   }
 
   let left, top, width, height
   function calculateIndicator ()  
   {
+    if ($tabStore.id) {
       if (!vertical) {
         width = $tabStore?.boundingBox?.width + "px"
         height = "2px";
@@ -79,14 +82,15 @@
         top = $tabStore?.boundingBox?.top - container?.getBoundingClientRect().top + "px"
         left = -2 + "px"
       }
+    }
   }
-
+  
   onMount ( () => {
     hideNonSelected(); 
     calculateIndicator();
   })
 
-  $: console.log ($tabStore.id)
+  $: console.log ($tabStore?.id)
 </script>
 
 <div use:styleable={$component.styles}>
@@ -123,7 +127,12 @@
 
     </div>
     {:else}
-      <p> Please add some containers to get started ! </p>
+      <div class="instructions"> 
+          <h2> Super Tabs Component </h2>
+          <p> The Super Tabs Component will render a Tabs control with a Tab for each of it's child components </p>
+          <p> It will use the "Name" property of the component as Tab text </p>
+          <p> Add a couple of Container Components to get started ! </p>
+      </div>
     {/if}
 
 </div>
