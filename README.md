@@ -1,8 +1,10 @@
-# Bb-component-SuperTabs
-This is a readme for your new Budibase plugin.
+# Budibase Component - Super Tabs !
+A Budibase Tabs component with Super powers! :
 
 # Description
-A Tabs component for Budibase with Super Power
+The Super Tabs component for Budibase renders a dynamic Tab Control from the list of its child components.
+It will render any component as a Tab. The component "Name" property will become the Tab's text. 
+Drag a couple of Container Componets to get started !
 
 Find out more about [Budibase](https://github.com/Budibase/budibase).
 
