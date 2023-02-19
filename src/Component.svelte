@@ -11,6 +11,7 @@
   export let compact = false
   export let emphasized = false
   export let emphasizedColor = "var(--primaryColor)"
+  export let onTabChange
 
   const { styleable, builderStore, screenStore, componentStore } = getContext("sdk")
   const component = getContext("component")
@@ -25,6 +26,7 @@
   // Set Store initial State
   let selectedTab = {
     id : undefined,
+    name : "",
     boundingBox: null,
   }
   const tabStore = writable(selectedTab)
@@ -84,13 +86,17 @@
       }
     }
   }
+
+  function handleTabChange ( e ) {
+    let context = { "tabName": e.detail.tabName }
+    onTabChange?.( context )
+    console.log("Tab Changed to :", e.detail.tabName )
+  }
   
   onMount ( () => {
     hideNonSelected(); 
     calculateIndicator();
   })
-
-  $: console.log ($tabStore?.id)
 </script>
 
 <div use:styleable={$component.styles}>
@@ -111,7 +117,10 @@
         class="spectrum-Tabs spectrum-Tabs--size{size}"
       >
           {#each _tabs as _tab}
-            <Tab title = {_tab._instanceName} id = {_tab._id} {emphasized}/>
+            <Tab 
+              on:tabSelect={handleTabChange}
+              title = {_tab._instanceName} 
+              id = {_tab._id} {emphasized}/>
           {/each}
 
          <div 

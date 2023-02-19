@@ -1,5 +1,7 @@
 <script>
-    import { getContext } from "svelte"
+    import { getContext , createEventDispatcher } from "svelte"
+    const dispatch = createEventDispatcher();
+
     const tabStore = getContext ("tabStore")
     export let id
     export let title
@@ -14,6 +16,7 @@
     function handleClick () {
         $tabStore.id = id
         $tabStore.boundingBox = container?.getBoundingClientRect();
+        dispatch("tabSelect", {"tabID": id, "tabName": title } )
     }
     function init() {
         if (isSelected)

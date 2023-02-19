@@ -77,6 +77,22 @@
         "label": "Emphasized Color",
         "key": "emphasizedColor",
         "dependsOn": "emphasized"
+      },
+      {
+        "section": true,
+        "name": "On Tab Change",
+        "settings": [
+          {
+            "type": "event",
+            "key": "onTabChange",
+            "context": [
+              {
+                "label": "Active Tab Name",
+                "key": "tabName"
+              }
+            ]
+          }
+        ]
       }
     ]
   }
