@@ -12,6 +12,7 @@
   export let emphasized = false
   export let emphasizedColor = "var(--primaryColor)"
   export let onTabChange
+  export let initialTabIndex
 
   const { styleable, builderStore, screenStore, componentStore } = getContext("sdk")
   const component = getContext("component")
@@ -38,7 +39,8 @@
     let node = findComponentById($screenStore.activeScreen.props, $component.id)
     if (node) {
       _tabs = node._children;
-      _fallbackSelectedID = _tabs[0]?._id;
+      const safeIndex = initialTabIndex > _tabs.length -1 ? _tabs.length -1 : initialTabIndex
+      _fallbackSelectedID = _tabs[safeIndex]?._id;
     }
   }
 

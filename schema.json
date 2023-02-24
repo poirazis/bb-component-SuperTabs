@@ -6,7 +6,7 @@
     "friendlyName": "Super Tabs",
     "description": "A Tabs component for Budibase with Super Power",
     "icon": "Folder2Color",
-    "styles": [ "padding", "border", "shadow" ],
+    "styles": ["padding", "border", "shadow"],
     "hasChildren": true,
     "info": "Turn any Group of compoenents into Tabs ! Made with love ",
     "settings": [
@@ -49,6 +49,14 @@
           }
         ],
         "defaultValue": "M"
+      },
+      {
+        "type": "number",
+        "label": "Initial Tab Index",
+        "key": "initialTabIndex",
+        "info": "Select which tab to have open on screen load",
+        "defaultValue": 0,
+        "min": 0
       },
       {
         "type": "boolean",
