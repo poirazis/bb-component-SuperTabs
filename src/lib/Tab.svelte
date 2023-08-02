@@ -1,5 +1,5 @@
 <script>
-    import { getContext , createEventDispatcher } from "svelte"
+    import { getContext , createEventDispatcher, onMount } from "svelte"
     const dispatch = createEventDispatcher();
 
     const tabStore = getContext ("tabStore")
@@ -8,10 +8,9 @@
     export let emphasized
 
     let container
-    let isSelected
+    export let isSelected
 
-    $: isSelected = ( $tabStore?.id === id )
-    $: init (id, title, emphasized, $tabStore.id)
+    $: init (id, title, emphasized, $tabStore.id, isSelected)
 
     function handleClick () {
         $tabStore.id = id
@@ -19,9 +18,11 @@
         dispatch("tabSelect", {"tabID": id, "tabName": title } )
     }
     function init() {
-        if (isSelected)
-            $tabStore.boundingBox = container?.getBoundingClientRect();
+      if (isSelected)
+        $tabStore.boundingBox = container?.getBoundingClientRect();
     }
+
+    onMount( () => init() )
 
 </script>
 

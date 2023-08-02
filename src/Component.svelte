@@ -1,9 +1,9 @@
 <script>
-  import { getContext, setContext, onMount } from "svelte"
+  import { getContext, setContext, onMount, tick  } from "svelte"
   import { writable } from "svelte/store"; 
-  import { findComponentById } from "./lib/helpers"
-  import Tab from "./lib/Tab.svelte"
-  
+  import { elementSizeStore } from "svelte-legos";
+
+  import Tab from "./lib/Tab.svelte"  
   export let size = "M"
   export let direction
   export let centered = false
@@ -13,15 +13,19 @@
   export let emphasizedColor = "var(--primaryColor)"
   export let onTabChange
 
-  const { styleable, builderStore, screenStore, componentStore } = getContext("sdk")
+  const { styleable } = getContext("sdk")
   const component = getContext("component")
 
-  // 
+  let tabsToRender = []
+
   let container
   let contents
   let vertical
-  let _tabs = undefined
+  let sizeStore
   let _fallbackSelectedID = undefined
+  let children_no = 0
+
+  $: console.log(children_no)
 
   // Set Store initial State
   let selectedTab = {
@@ -34,25 +38,28 @@
 
   $: vertical = (direction === "vertical")
 
-  $: if ($screenStore.activeScreen.props && $component.id) {
-    let node = findComponentById($screenStore.activeScreen.props, $component.id)
-    if (node) {
-      _tabs = node._children;
-      _fallbackSelectedID = _tabs[0]?._id;
-    }
-  }
 
-  $: if (!$tabStore.id) $tabStore.id = _fallbackSelectedID
+  $: populateTabsFromChildren( $sizeStore )
   $: hideNonSelected($tabStore.id)
   $: calculateIndicator($tabStore.id, vertical)
 
-  // If in the builder preview, show this appropriate Container if a child is selected
-  $: {
-    if ( $builderStore.inBuilder && _tabs.length > 0 ) {
-      let pos =  _tabs?.findIndex( e => ( $componentStore?.selectedComponentPath.includes(e._id) ) )
-      $tabStore.id = pos > -1 ? _tabs?.[pos]._id : _fallbackSelectedID;  
-     }     
-  } 
+  function populateTabsFromChildren () {
+    let contentChildren = contents?.children;
+    if ( contentChildren && (contentChildren.length != children_no) ) { 
+      console.log("Regenerating")
+      tabsToRender = [];
+      children_no = contentChildren.length;
+
+      for ( let i = 0; i < contentChildren.length; i++ ) {
+        let id = contentChildren[i].attributes.getNamedItem("data-id")?.nodeValue;
+        let title = contentChildren[i].attributes.getNamedItem("data-name")?.nodeValue;
+        tabsToRender.push({ id : id, title: title })
+      }
+      _fallbackSelectedID = tabsToRender[0].id;
+      $tabStore.id = tabsToRender[0].id;
+    }
+  }
+
 
   function hideNonSelected () {
     if (contents?.children.length > 0) {
@@ -70,9 +77,10 @@
   }
 
   let left, top, width, height
-  function calculateIndicator ()  
+  async function calculateIndicator ()  
   {
     if ($tabStore.id) {
+      console.log("Calculating")
       if (!vertical) {
         width = $tabStore?.boundingBox?.width + "px"
         height = "2px";
@@ -90,18 +98,19 @@
   function handleTabChange ( e ) {
     let context = { "tabName": e.detail.tabName }
     onTabChange?.( context )
-    console.log("Tab Changed to :", e.detail.tabName )
   }
   
   onMount ( () => {
-    hideNonSelected(); 
-    calculateIndicator();
+    sizeStore = elementSizeStore(contents);
+    populateTabsFromChildren();
   })
+
+  $: console.log($sizeStore)
 </script>
 
 <div use:styleable={$component.styles}>
  
-    {#if _tabs?.length > 0 && $tabStore.id }
+    {#if $$slots  }
     <div 
       bind:this={container} 
       class="wrapper" 
@@ -116,11 +125,12 @@
         class:spectrum-Tabs--compact={compact}
         class="spectrum-Tabs spectrum-Tabs--size{size}"
       >
-          {#each _tabs as _tab}
+          {#each tabsToRender as _tab}
             <Tab 
               on:tabSelect={handleTabChange}
-              title = {_tab._instanceName} 
-              id = {_tab._id} {emphasized}/>
+              title = {_tab.title} 
+              isSelected = { $tabStore.id === _tab.id }
+              id = {_tab.id} {emphasized}/>
           {/each}
 
          <div 
@@ -129,6 +139,7 @@
           style="width: {width}; height: {height}; left: {left}; top: {top};">
         </div> 
       </div>
+
 
       <div bind:this={contents} class="tabContents"> 
         <slot />
