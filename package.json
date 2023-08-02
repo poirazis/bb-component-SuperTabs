@@ -1,6 +1,6 @@
 {
   "name": "bb-component-SuperTabs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Tabs component for Budibase with Super Powers",
   "author": "Michael Poirazi",
   "license": "MIT",
@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@crownframework/svelte-error-boundary": "^1.0.3",
-    "svelte": "^3.49.0"
+    "svelte": "^3.49.0",
+    "svelte-legos": "^0.2.1"
   },
   "devDependencies": {
     "@budibase/backend-core": "^2.0.13",
