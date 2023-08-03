@@ -51,6 +51,15 @@
         "defaultValue": "M"
       },
       {
+        "type": "number",
+        "key": "initialIndex",
+        "label": "Active Tab",
+        "min" : 0,
+        "defaultValue": 0
+
+      },
+
+      {
         "type": "boolean",
         "label": "Centered",
         "key": "centered",

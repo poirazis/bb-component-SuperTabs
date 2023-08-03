@@ -1,7 +1,6 @@
 <script>
-  import { getContext, setContext, onMount, tick  } from "svelte"
+  import { getContext, setContext, onMount, onDestroy  } from "svelte"
   import { writable } from "svelte/store"; 
-  import { elementSizeStore } from "svelte-legos";
 
   import Tab from "./lib/Tab.svelte"  
   export let size = "M"
@@ -12,20 +11,16 @@
   export let emphasized = false
   export let emphasizedColor = "var(--primaryColor)"
   export let onTabChange
+  export let initialIndex
 
-  const { styleable } = getContext("sdk")
+  const { styleable, builderStore, componentStore, screenStore } = getContext("sdk")
   const component = getContext("component")
-
-  let tabsToRender = []
 
   let container
   let contents
   let vertical
-  let sizeStore
-  let _fallbackSelectedID = undefined
-  let children_no = 0
-
-  $: console.log(children_no)
+  let tabItems = []
+  let poller 
 
   // Set Store initial State
   let selectedTab = {
@@ -38,28 +33,32 @@
 
   $: vertical = (direction === "vertical")
 
-
-  $: populateTabsFromChildren( $sizeStore )
+  $: populateTabsFromChildren($screenStore)
   $: hideNonSelected($tabStore.id)
   $: calculateIndicator($tabStore.id, vertical)
 
-  function populateTabsFromChildren () {
-    let contentChildren = contents?.children;
-    if ( contentChildren && (contentChildren.length != children_no) ) { 
-      console.log("Regenerating")
-      tabsToRender = [];
-      children_no = contentChildren.length;
+  // If in the builder preview, show this appropriate Container if a child is selected
+  $: {
+    if ( $builderStore.inBuilder && tabItems.length > 0 ) {
+      let pos = tabItems?.findIndex( e => ( $componentStore?.selectedComponentPath.includes(e.id) ) )
+      $tabStore.id = pos > -1 ? tabItems[pos].id : tabItems[0].id;  
+      }     
+    } 
 
-      for ( let i = 0; i < contentChildren.length; i++ ) {
-        let id = contentChildren[i].attributes.getNamedItem("data-id")?.nodeValue;
-        let title = contentChildren[i].attributes.getNamedItem("data-name")?.nodeValue;
-        tabsToRender.push({ id : id, title: title })
+  function populateTabsFromChildren ( full ) {
+    if ( contents ) {
+      if ( full || contents.children?.length != tabItems.length ) {
+        tabItems = []
+        for (let index = 0; index < contents.children.length; index++) {
+          tabItems.push ({
+            id: contents.children[index].attributes.getNamedItem("data-id")?.nodeValue,
+            title: contents.children[index].attributes.getNamedItem("data-name")?.nodeValue
+          })
+          $tabStore.id = initialIndex < tabItems.length ? tabItems[initialIndex].id : tabItems[0].id
+        }
       }
-      _fallbackSelectedID = tabsToRender[0].id;
-      $tabStore.id = tabsToRender[0].id;
     }
   }
-
 
   function hideNonSelected () {
     if (contents?.children.length > 0) {
@@ -80,7 +79,6 @@
   async function calculateIndicator ()  
   {
     if ($tabStore.id) {
-      console.log("Calculating")
       if (!vertical) {
         width = $tabStore?.boundingBox?.width + "px"
         height = "2px";
@@ -101,16 +99,15 @@
   }
   
   onMount ( () => {
-    sizeStore = elementSizeStore(contents);
-    populateTabsFromChildren();
+    poller = setInterval ( () => populateTabsFromChildren() , 50 )
   })
 
-  $: console.log($sizeStore)
+  onDestroy ( () => clearInterval(poller) )
 </script>
 
 <div use:styleable={$component.styles}>
  
-    {#if $$slots  }
+    {#if $component?.children != 0 }
     <div 
       bind:this={container} 
       class="wrapper" 
@@ -125,7 +122,7 @@
         class:spectrum-Tabs--compact={compact}
         class="spectrum-Tabs spectrum-Tabs--size{size}"
       >
-          {#each tabsToRender as _tab}
+          {#each tabItems as _tab }
             <Tab 
               on:tabSelect={handleTabChange}
               title = {_tab.title} 
@@ -148,7 +145,7 @@
     </div>
     {:else}
       <div class="instructions"> 
-          <h2> Super Tabs Component </h2>
+          <h2>  ⚡️ Super Tabs Component </h2>
           <p> The Super Tabs Component will render a Tabs control with a Tab for each of it's child components </p>
           <p> It will use the "Name" property of the component as Tab text </p>
           <p> Add a couple of Container Components to get started ! </p>
