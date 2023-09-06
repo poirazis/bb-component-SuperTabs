@@ -51,12 +51,9 @@
         "defaultValue": "M"
       },
       {
-        "type": "number",
+        "type": "text",
         "key": "initialIndex",
-        "label": "Active Tab",
-        "min" : 0,
-        "defaultValue": 0
-
+        "label": "Active Tab"
       },
 
       {

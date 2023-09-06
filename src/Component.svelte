@@ -20,7 +20,8 @@
   let contents
   let vertical
   let tabItems = []
-  let poller 
+  let poller
+  let initTab 
 
   // Set Store initial State
   let selectedTab = {
@@ -32,6 +33,7 @@
   setContext("tabStore", tabStore) 
 
   $: vertical = (direction === "vertical")
+  $: initTab = Number (initialIndex) ?? 0;
 
   $: populateTabsFromChildren($screenStore)
   $: hideNonSelected($tabStore.id)
@@ -54,7 +56,7 @@
             id: contents.children[index].attributes.getNamedItem("data-id")?.nodeValue,
             title: contents.children[index].attributes.getNamedItem("data-name")?.nodeValue
           })
-          $tabStore.id = initialIndex < tabItems.length ? tabItems[initialIndex].id : tabItems[0].id
+          $tabStore.id =  initTab > 0 && initTab < tabItems.length ? tabItems[initTab].id : tabItems[0].id
         }
       }
     }
@@ -76,7 +78,7 @@
   }
 
   let left, top, width, height
-  async function calculateIndicator ()  
+  function calculateIndicator ()  
   {
     if ($tabStore.id) {
       if (!vertical) {
