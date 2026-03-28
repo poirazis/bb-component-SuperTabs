@@ -1,12 +1,18 @@
 {
   "type": "component",
-  "metadata": {},
+  "metadata": {
+    "svelteMajor": 5
+  },
   "schema": {
     "name": "bb-component-SuperTabs",
     "friendlyName": "Super Tabs",
     "description": "A Tabs component for Budibase with Super Power",
     "icon": "Folder2Color",
-    "styles": [ "padding", "border", "shadow" ],
+    "styles": [
+      "padding",
+      "border",
+      "shadow"
+    ],
     "hasChildren": true,
     "info": "Turn any Group of compoenents into Tabs ! Made with love ",
     "settings": [
@@ -55,13 +61,15 @@
         "key": "initialIndex",
         "label": "Active Tab"
       },
-
       {
         "type": "boolean",
         "label": "Centered",
         "key": "centered",
         "defaultValue": false,
-        "dependsOn": { "setting": "direction", "value": "horizontal" }
+        "dependsOn": {
+          "setting": "direction",
+          "value": "horizontal"
+        }
       },
       {
         "type": "boolean",
